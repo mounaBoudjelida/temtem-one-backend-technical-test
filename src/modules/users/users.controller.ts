@@ -11,7 +11,7 @@ export class UsersController {
 
   @Public()
   @Post('/register')
-  @ApiOperation({ summary: "S'inscrire" })
+  @ApiOperation({ summary: 'Sign up' })
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }

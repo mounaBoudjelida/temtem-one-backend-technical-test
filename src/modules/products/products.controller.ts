@@ -26,8 +26,17 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName } from 'src/utils/file-upload.utils';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 @ApiTags('Products')
+@ApiBearerAuth()
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -44,18 +53,44 @@ export class ProductsController {
   )
   @Post('/')
   @ApiOperation({ summary: 'Create new product' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: 'string' },
+        category: { type: 'string' },
+        price: { type: 'number' },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: `./files/${PRODUCT_IMAGE_PATH}`,
+        filename: editFileName,
+      }),
+    }),
+  )
   create(
+    @Request() req: any,
+    @Body() createProductDto: CreateProductDto,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({ fileType: /(jpg|jpeg|png|webp|gif)$/ })
         .addMaxSizeValidator({
           maxSize: PRODUCT_IMAGE_MAX_SIZE,
         })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+        }),
     )
     productImage: Express.Multer.File,
-    @Request() req: any,
-    @Body() createProductDto: CreateProductDto,
   ) {
     return this.productsService.create(
       req.user,
@@ -66,8 +101,8 @@ export class ProductsController {
 
   @UseGuards(AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.READ))
   @Get('/:id')
-  @ApiQuery({ name: 'id', required: true, type: 'string' })
   @ApiOperation({ summary: 'Get a product by id' })
+  @ApiParam({ name: 'id', required: true, type: 'string' })
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
   }
@@ -76,8 +111,24 @@ export class ProductsController {
     AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.UPDATE),
   )
   @Patch('/:id')
-  @ApiQuery({ name: 'id', required: true, type: 'string' })
   @ApiOperation({ summary: 'Update a product by id' })
+  @ApiParam({ name: 'id', required: true, type: 'string' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: 'string' },
+        category: { type: 'string' },
+        price: { type: 'number' },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -116,7 +167,7 @@ export class ProductsController {
   )
   @Delete('/:id')
   @ApiOperation({ summary: 'Remove a product' })
-  @ApiQuery({ name: 'id', required: true, type: 'string' })
+  @ApiParam({ name: 'id', required: true, type: 'string' })
   remove(@Request() req: any, @Param('id') id: string) {
     return this.productsService.remove(req.user, id);
   }

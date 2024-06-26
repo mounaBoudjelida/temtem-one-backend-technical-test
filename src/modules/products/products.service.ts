@@ -8,6 +8,8 @@ import { Model } from 'mongoose';
 import { Product } from './schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { PRODUCT_IMAGE_PATH } from 'src/utils/constants.utils';
+import { removeFileFromStorage } from 'src/utils/helpers.utils';
 
 @Injectable()
 export class ProductsService {
@@ -15,17 +17,21 @@ export class ProductsService {
     @InjectModel('Product') private readonly productModel: Model<Product>,
   ) {}
 
-  async create(currentUser: any,createProductDto: CreateProductDto, productImage: string) {
+  async create(
+    currentUser: any,
+    createProductDto: CreateProductDto,
+    productImage: string,
+  ) {
     const productExists = !!(await this.productModel.exists({
       name: createProductDto.name,
-          }));
+    }));
     if (productExists) {
       throw new ConflictException('NAME_ALREADY_EXISTS');
     }
     const product = await this.productModel.create({
       ...createProductDto,
       image: productImage,
-      createdBy: currentUser._id
+      createdBy: currentUser._id,
     });
     return product;
   }
@@ -58,15 +64,25 @@ export class ProductsService {
         throw new ConflictException('NAME_ALREADY_EXISTS');
       }
     }
+
+    const _product = await this.productModel.findById(id);
+    if (!_product) {
+      throw new NotFoundException('PRODUCT_NOT_FOUND');
+    }
+    if (productImage && _product.image) {
+      removeFileFromStorage(`${PRODUCT_IMAGE_PATH}/${_product.image}`);
+    }
+
     const data: any = updateProductDto;
     data.updatedBy = currentUser._id;
-    data.image = productImage;
+
+    if (productImage) {
+      data.image = productImage;
+    }
     const product = await this.productModel.findByIdAndUpdate(id, data, {
       new: true,
     });
-    if (!product) {
-      throw new NotFoundException('PRODUCT_NOT_FOUND');
-    }
+
     return product;
   }
 

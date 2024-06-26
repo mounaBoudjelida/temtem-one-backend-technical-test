@@ -4,9 +4,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TransformResponseInterceptor } from './interceptors/transformResponse.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { logger } from './utils/custom-logger.utils';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger,
+  });
   app.setGlobalPrefix('api/v1');
   app.enableCors();
   app.useGlobalPipes(
@@ -24,10 +27,12 @@ async function bootstrap() {
     .setDescription('Products Store API description')
     .setVersion('1.0')
     .addTag('Products')
+    .addBearerAuth()
+    .addSecurityRequirements('bearer')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('products-stote-api', app, document);
   await app.listen(configService.get('PORT', 4000));
- 
 }
 bootstrap();
