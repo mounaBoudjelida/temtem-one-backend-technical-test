@@ -15,14 +15,18 @@ export class ProductsService {
     @InjectModel('Product') private readonly productModel: Model<Product>,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(currentUser: any,createProductDto: CreateProductDto, productImage: string) {
     const productExists = !!(await this.productModel.exists({
       name: createProductDto.name,
-    }));
+          }));
     if (productExists) {
       throw new ConflictException('NAME_ALREADY_EXISTS');
     }
-    const product = await this.productModel.create(createProductDto);
+    const product = await this.productModel.create({
+      ...createProductDto,
+      image: productImage,
+      createdBy: currentUser._id
+    });
     return product;
   }
 
@@ -39,7 +43,12 @@ export class ProductsService {
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(
+    currentUser: any,
+    id: string,
+    updateProductDto: UpdateProductDto,
+    productImage?: string,
+  ) {
     if (updateProductDto.name) {
       const productExists = !!(await this.productModel.exists({
         _id: { $ne: id },
@@ -49,18 +58,19 @@ export class ProductsService {
         throw new ConflictException('NAME_ALREADY_EXISTS');
       }
     }
-    const product = await this.productModel.findByIdAndUpdate(
-      id,
-      updateProductDto,
-      { new: true },
-    );
+    const data: any = updateProductDto;
+    data.updatedBy = currentUser._id;
+    data.image = productImage;
+    const product = await this.productModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
     if (!product) {
       throw new NotFoundException('PRODUCT_NOT_FOUND');
     }
     return product;
   }
 
-  async remove(id: string) {
+  async remove(currentUser: any, id: string) {
     /* if Hard Delete */
     //const product = await this.productModel.findByIdAndDelete(id);
 
@@ -71,6 +81,7 @@ export class ProductsService {
       },
       {
         isArchived: true,
+        updatedBy: currentUser._id,
       },
       { new: true },
     );

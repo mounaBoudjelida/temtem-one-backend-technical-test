@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Category } from 'src/enums/category.enum';
+import { User } from 'src/modules/users/schemas/user.schema';
 
 @Schema({
   collection: 'products',
@@ -26,6 +27,12 @@ export class Product {
 
   @Prop({ type: Boolean, default: false })
   isArchived: boolean; //Soft Delete
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  createdBy?: User;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  updatedBy?: User;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
