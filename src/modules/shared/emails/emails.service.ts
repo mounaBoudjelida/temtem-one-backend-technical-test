@@ -4,12 +4,16 @@ import * as fs from 'fs';
 import Handlebars from 'handlebars';
 import * as nodemailer from 'nodemailer';
 import { EmailInfo } from './interfaces/email-info.interface';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class EmailsService {
   private mailConfig = {};
   private transporter: nodemailer.Transporter;
-  constructor(configService: ConfigService) {
+  constructor(
+    configService: ConfigService,
+    private loggerService: LoggerService,
+  ) {
     this.mailConfig = {
       pool: true,
       host: 'smtp.googlemail.com',
@@ -39,6 +43,7 @@ export class EmailsService {
       });
       return result;
     } catch (err) {
+      this.loggerService.error(err);
       console.error(err);
     }
   }

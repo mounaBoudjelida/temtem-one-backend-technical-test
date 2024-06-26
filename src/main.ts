@@ -5,6 +5,8 @@ import { AppModule } from './app.module';
 import { TransformResponseInterceptor } from './interceptors/transformResponse.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { logger } from './utils/custom-logger.utils';
+import { LoggerService } from './modules/shared/logger/logger.service';
+import { GlobalExceptionFilter } from './exceptions-filters/global-exception-filter.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -19,6 +21,12 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // set up global exception filter
+  (function () {
+    const loggerService = app.get<LoggerService>(LoggerService);
+    app.useGlobalFilters(new GlobalExceptionFilter(loggerService));
+  })();
   app.useGlobalInterceptors(new TransformResponseInterceptor());
   const configService = app.get(ConfigService<{ PORT: number }, true>);
 

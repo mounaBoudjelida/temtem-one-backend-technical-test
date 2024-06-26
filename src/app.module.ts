@@ -11,7 +11,7 @@ import { PRODUCT_IMAGE_PATH } from './utils/constants.utils';
 import { validate } from './validators/env.validator';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
-
+import { LoggerModule } from './modules/shared/logger/logger.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,7 +36,7 @@ import { UsersModule } from './modules/users/users.module';
     ProductsModule,
     AuthModule,
     SeedsModule,
-    SeedsModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
