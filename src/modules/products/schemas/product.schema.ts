@@ -36,3 +36,13 @@ export class Product {
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
+ProductSchema.pre(
+  ['find', 'findOne', 'findOneAndUpdate'],
+  async function (next) {
+    this.setQuery({
+      ...this.getQuery(),
+      isArchived: false,
+    });
+    return next();
+  },
+);

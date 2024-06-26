@@ -26,13 +26,15 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName } from 'src/utils/file-upload.utils';
-
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @UseGuards(AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.READ))
   @Get('/')
+  @ApiOperation({ summary: 'Get all products' })
   findAll() {
     return this.productsService.findAll();
   }
@@ -41,6 +43,7 @@ export class ProductsController {
     AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.CREATE),
   )
   @Post('/')
+  @ApiOperation({ summary: 'Create new product' })
   create(
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -63,6 +66,8 @@ export class ProductsController {
 
   @UseGuards(AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.READ))
   @Get('/:id')
+  @ApiQuery({ name: 'id', required: true, type: 'string' })
+  @ApiOperation({ summary: 'Get a product by id' })
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
   }
@@ -71,6 +76,8 @@ export class ProductsController {
     AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.UPDATE),
   )
   @Patch('/:id')
+  @ApiQuery({ name: 'id', required: true, type: 'string' })
+  @ApiOperation({ summary: 'Update a product by id' })
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -108,6 +115,8 @@ export class ProductsController {
     AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.REMOVE),
   )
   @Delete('/:id')
+  @ApiOperation({ summary: 'Remove a product' })
+  @ApiQuery({ name: 'id', required: true, type: 'string' })
   remove(@Request() req: any, @Param('id') id: string) {
     return this.productsService.remove(req.user, id);
   }

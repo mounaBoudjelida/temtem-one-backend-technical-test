@@ -18,12 +18,11 @@ export const AuthorizationGuard = (
       const user = context.switchToHttp().getRequest().user as User;
       if (user.role === Role.ADMIN) return true;
 
-      const found = !!user.role.permissions.find(
-        (permission) =>
-          permission.resource === resource &&
-          permission.actions.includes(action),
-      );
-      if (found) {
+      if (
+        user.role === Role.GUEST &&
+        resource === Resource.PRODUCTS &&
+        action === PredefinedPermissions.READ
+      ) {
         return true;
       }
       throw new ForbiddenException('FORBIDDEN');
