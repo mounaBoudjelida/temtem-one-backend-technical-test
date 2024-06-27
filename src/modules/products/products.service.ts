@@ -10,6 +10,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PRODUCT_IMAGE_PATH } from 'src/utils/constants.utils';
 import { removeFileFromStorage } from 'src/utils/helpers.utils';
+import { User } from '../users/schemas/user.schema';
+import { Role } from 'src/enums/role.enum';
+import { Category } from 'src/enums/category.enum';
 
 @Injectable()
 export class ProductsService {
@@ -36,9 +39,33 @@ export class ProductsService {
     return product;
   }
 
-  async findAll() {
-    const products = await this.productModel.find();
-    return products;
+  async findAll(
+    currentUser: User,
+    sortBy: string,
+    order: string,
+    filter: string,
+  ) {
+    if (currentUser.role === Role.ADMIN) {
+      const products = await this.productModel.find();
+      return products;
+    } else {
+      let filterQuery: any = {};
+      if (filter) {
+        filterQuery = { category: { $eq: filter } };
+      }
+
+      const sortOptions = {};
+      if (sortBy || order) {
+        const sortField = sortBy || 'price';
+        const sortOrder = order === 'desc' ? -1 : 1;
+        sortOptions[sortField] = sortOrder;
+      }
+
+      const products = await this.productModel
+        .find(filterQuery)
+        .sort(sortOptions);
+      return products;
+    }
   }
 
   async findOne(id: string) {

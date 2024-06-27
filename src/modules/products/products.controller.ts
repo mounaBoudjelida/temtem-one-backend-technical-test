@@ -12,6 +12,7 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { Resource } from 'src/enums/resource.enum';
 import { AuthorizationGuard } from 'src/guards/auth.guard';
@@ -35,6 +36,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '../users/schemas/user.schema';
 @ApiTags('Products')
 @ApiBearerAuth()
 @Controller('products')
@@ -44,8 +46,21 @@ export class ProductsController {
   @UseGuards(AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.READ))
   @Get('/')
   @ApiOperation({ summary: 'Get all products' })
-  findAll() {
-    return this.productsService.findAll();
+  @ApiQuery({ name: 'sortBy', required: false, type: 'string' })
+  @ApiQuery({ name: 'order', required: false, type: 'string' })
+  @ApiQuery({ name: 'filter', required: false, type: 'string' })
+  findAll(
+    @Request() req: any,
+    @Query('sortBy') sortBy: string,
+    @Query('order') order: string,
+    @Query('filter') filter: string,
+  ) {
+    return this.productsService.findAll(
+      req.user as User,
+      sortBy,
+      order,
+      filter,
+    );
   }
 
   @UseGuards(
@@ -57,11 +72,12 @@ export class ProductsController {
   @ApiBody({
     schema: {
       type: 'object',
+      required: ['name', 'category', 'price', 'image'],
       properties: {
-        name: { type: 'string' },
-        description: { type: 'string' },
-        category: { type: 'string' },
-        price: { type: 'number' },
+        name: { type: 'string', example: 'Lunette' },
+        description: { type: 'string', example: 'Protège les yeux' },
+        category: { type: 'string', example: 'first category' },
+        price: { type: 'number', example: 567 },
         image: {
           type: 'string',
           format: 'binary',
@@ -87,7 +103,7 @@ export class ProductsController {
           maxSize: PRODUCT_IMAGE_MAX_SIZE,
         })
         .build({
-          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         }),
     )
     productImage: Express.Multer.File,
