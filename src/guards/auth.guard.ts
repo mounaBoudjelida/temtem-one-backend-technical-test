@@ -4,15 +4,11 @@ import {
   ForbiddenException,
   mixin,
 } from '@nestjs/common';
-import { PredefinedPermissions } from 'src/enums/predefined-permissions.enum';
-import { Resource } from 'src/enums/resource.enum';
+import { Action } from 'src/enums/actions.enum';
 import { Role } from 'src/enums/role.enum';
 import { User } from 'src/modules/users/schemas/user.schema';
 
-export const AuthorizationGuard = (
-  resource: Resource,
-  action: PredefinedPermissions,
-) => {
+export const AuthorizationGuard = (action: Action) => {
   class AuthorizationGuardMixin implements CanActivate {
     canActivate(context: ExecutionContext) {
       const user = context.switchToHttp().getRequest().user as User;
@@ -20,8 +16,7 @@ export const AuthorizationGuard = (
 
       if (
         user.role === Role.GUEST &&
-        resource === Resource.PRODUCTS &&
-        action === PredefinedPermissions.READ
+        user.permissions.some((permission) => permission === action)
       ) {
         return true;
       }

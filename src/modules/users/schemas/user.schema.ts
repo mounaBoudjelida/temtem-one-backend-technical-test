@@ -3,6 +3,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { Role } from 'src/enums/role.enum';
 import * as bcrypt from 'bcrypt';
 import { logger } from 'src/utils/custom-logger.utils';
+import { Action } from 'src/enums/actions.enum';
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({
@@ -33,10 +34,15 @@ export class User {
   @Prop({ type: String, required: true, enum: Object.values(Role) })
   role: Role;
 
+  @Prop({
+    type: [String],
+    required: true,
+    enum: Object.values(Action),
+  })
+  permissions: Action[];
+
   createdAt: Date;
   updatedAt: Date;
-
- 
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -53,4 +59,3 @@ UserSchema.pre('save', async function (next) {
     return next(error);
   }
 });
-

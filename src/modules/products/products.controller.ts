@@ -14,10 +14,9 @@ import {
   UseInterceptors,
   Query,
 } from '@nestjs/common';
-import { Resource } from 'src/enums/resource.enum';
 import { AuthorizationGuard } from 'src/guards/auth.guard';
 import { ProductsService } from './products.service';
-import { PredefinedPermissions } from 'src/enums/predefined-permissions.enum';
+import { Action } from 'src/enums/actions.enum';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import {
@@ -43,7 +42,7 @@ import { User } from '../users/schemas/user.schema';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @UseGuards(AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.READ))
+  @UseGuards(AuthorizationGuard(Action.READ_PRODUCT))
   @Get('/')
   @ApiOperation({ summary: 'Get all products' })
   @ApiQuery({ name: 'sortBy', required: false, type: 'string' })
@@ -63,9 +62,7 @@ export class ProductsController {
     );
   }
 
-  @UseGuards(
-    AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.CREATE),
-  )
+  @UseGuards(AuthorizationGuard(Action.CREATE_PRODUCT))
   @Post('/')
   @ApiOperation({ summary: 'Create new product' })
   @ApiConsumes('multipart/form-data')
@@ -115,7 +112,7 @@ export class ProductsController {
     );
   }
 
-  @UseGuards(AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.READ))
+  @UseGuards(AuthorizationGuard(Action.READ_PRODUCT))
   @Get('/:id')
   @ApiOperation({ summary: 'Get a product by id' })
   @ApiParam({ name: 'id', required: true, type: 'string' })
@@ -123,9 +120,7 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @UseGuards(
-    AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.UPDATE),
-  )
+  @UseGuards(AuthorizationGuard(Action.UPDATE_PRODUCT))
   @Patch('/:id')
   @ApiOperation({ summary: 'Update a product by id' })
   @ApiParam({ name: 'id', required: true, type: 'string' })
@@ -178,9 +173,7 @@ export class ProductsController {
     );
   }
 
-  @UseGuards(
-    AuthorizationGuard(Resource.PRODUCTS, PredefinedPermissions.REMOVE),
-  )
+  @UseGuards(AuthorizationGuard(Action.REMOVE_PRODUCT))
   @Delete('/:id')
   @ApiOperation({ summary: 'Remove a product' })
   @ApiParam({ name: 'id', required: true, type: 'string' })

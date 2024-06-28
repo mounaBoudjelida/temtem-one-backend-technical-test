@@ -1,73 +1,70 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Products Store Api
+Products Store is a RESTful API that give necessary endpoints to manage a product store.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Features
+## 1. Store owner 
+* Login
+* Create new Product
+* Update a product
+* Delete a product
+* View products (listing and product by id)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 2. GUEST
+* Register
+* Login
+* Products Store Api
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Requirements
+Tools needed to run your project are :
+* Nodejs (20.x)
+* npm (or yarn)
+* NestJS CLI
+* MongoDB for database
 
-## Installation
+## Project configuration
+Start by cloning this project on your workstation :
+```bash
+git clone https://github.com/mounaBoudjelida/temtem-one-backend-technical-test.git
+```
+Next, install all the dependencies of the project :
+```bash
+cd ./temtem-one-backend-technical-test
+npm install
+```
+Once dependencies are installed, configure your project by creating a new .env.developement file in the root directory, this file  contain the environment variables used for development, please check env.example file. 
+
+## Running the Application
+```bash
+# Run in development mode
+npm run start
+# or
+yarn start
+
+# Run in watch mode
+npm run start:dev
+# or
+yarn start:dev
+
+# Run in production mode
+npm run start:prod
+# or
+yarn start:prod
+
+```
+## API Documentation
+
+This project is using Swagger for documentation, just navigate to the link below to view the API documentation.
 
 ```bash
-$ npm install
+# Swagger
+http://localhost:4000/products-stote-api
 ```
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Contributing
+To add a new feature, fix an issue, or do any update on the project, please follow steps below:
+1. Fork the project
+2. Create your feature branch (git checkout -b YourFeature)
+3. Commit your changes (git commit -m 'Add some feature')
+4. Push to the branch (git push origin YourFeature)
+5. Open a pull request

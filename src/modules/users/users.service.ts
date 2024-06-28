@@ -12,6 +12,7 @@ import { capitalize } from 'src/utils/helpers.utils';
 import { EmailsService } from '../shared/emails/emails.service';
 import { NEW_ACCOUNT_SUBJECT } from 'src/utils/emails-subject.utils';
 import * as bcrypt from 'bcrypt';
+import { Action } from 'src/enums/actions.enum';
 
 @Injectable()
 export class UsersService {
@@ -36,6 +37,7 @@ export class UsersService {
     const user = await this.userModel.create({
       ...createUserDto,
       role: Role.GUEST,
+      permissions: [Action.READ_PRODUCT],
     });
     return user;
   }

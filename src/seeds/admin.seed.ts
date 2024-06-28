@@ -1,3 +1,4 @@
+import { Action } from 'src/enums/actions.enum';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 
 const _ADMIN_SEED: CreateUserDto = {
@@ -11,4 +12,5 @@ export const ADMIN_SEED = (email: string, role: string) => ({
   ..._ADMIN_SEED,
   email,
   role,
+  permissions: Object.values(Action)
 });
