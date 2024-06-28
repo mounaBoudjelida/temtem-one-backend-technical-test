@@ -18,8 +18,7 @@ export class CreateProductDto {
   @IsNumber()
   price: number;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ enum: Category, example: Category.CATEGORY_1 })
   @IsEnum(Category)
   category: Category;
 

@@ -36,6 +36,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '../users/schemas/user.schema';
+import { Category } from 'src/enums/category.enum';
 @ApiTags('Products')
 @ApiBearerAuth()
 @Controller('products')
@@ -73,7 +74,11 @@ export class ProductsController {
       properties: {
         name: { type: 'string', example: 'Lunette' },
         description: { type: 'string', example: 'Protège les yeux' },
-        category: { type: 'string', example: 'first category' },
+        category: {
+          type: 'string',
+          enum: Object.values(Category),
+          example: Category.CATEGORY_1,
+        },
         price: { type: 'number', example: 567 },
         image: {
           type: 'string',
@@ -128,10 +133,15 @@ export class ProductsController {
   @ApiBody({
     schema: {
       type: 'object',
+      required: ['name', 'category', 'price', 'image'],
       properties: {
         name: { type: 'string' },
         description: { type: 'string' },
-        category: { type: 'string' },
+        category: {
+          type: 'string',
+          enum: Object.values(Category),
+          example: Category.CATEGORY_1,
+        },
         price: { type: 'number' },
         image: {
           type: 'string',
