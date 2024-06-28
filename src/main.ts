@@ -7,6 +7,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { logger } from './utils/custom-logger.utils';
 import { LoggerService } from './modules/shared/logger/logger.service';
 import { GlobalExceptionFilter } from './exceptions-filters/global-exception-filter.filter';
+import { User } from './modules/users/schemas/user.schema';
+
+// use our user class
+declare module 'express' {
+  interface Request {
+    user?: User;
+  }
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

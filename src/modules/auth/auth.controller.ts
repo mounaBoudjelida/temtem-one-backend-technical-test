@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   HttpCode,
   HttpStatus,
@@ -9,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { Request } from 'express';
 import { Public } from 'src/decorators/is-public.decorator';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -23,7 +22,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Login to your account' })
-  login(@Req() req: any, @Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  login(@Req() req: Request) {
+    return this.authService.login(req.user!);
   }
 }
