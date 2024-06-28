@@ -23,8 +23,7 @@ import { LoggerModule } from './modules/shared/logger/logger.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         uri: configService.getOrThrow('DB_URI'),
-        // user: configService.getOrThrow("DB_USERNAME"),
-        // pass: configService.getOrThrow("DB_PASSWORD")
+
       }),
       inject: [ConfigService],
     }),
