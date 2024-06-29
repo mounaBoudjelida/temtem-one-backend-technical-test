@@ -42,12 +42,16 @@ async function bootstrap() {
     .setTitle('Products Store')
     .setDescription('Products Store API description')
     .setVersion('1.0')
-    .addTag('Products')
     .addBearerAuth()
     .addSecurityRequirements('bearer')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  // Sort tags alphabetically
+  document.tags = (document.tags || []).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
   SwaggerModule.setup('products-stote-api', app, document);
   await app.listen(configService.get('PORT', 4000));
 }
